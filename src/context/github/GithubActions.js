@@ -25,14 +25,57 @@ const searchUsers = async (text) => {
   return items;
 };
 
-// Get user and repos
-const getUserAndRepos = async (login) => {
-  const [user, repos] = await Promise.all([
-    github.get(`/users/${login}`),
-    github.get(`/users/${login}/repos`),
-  ]);
+// clear user
+// const clearUsers = () => {
+//   dispatch({ type: "CLEAR_USERS" });
+// };
 
-  return { user: user.data, repos: repos.data };
+// getiing single user
+const getSingleUser = async (login) => {
+  const response = await fetch(`${url}/users/${login}`, {
+    headers: {
+      Authorization: token,
+    },
+  });
+
+  if (response.ok) {
+    const user = await response.json();
+
+    return user;
+  } else {
+    window.location = "/notfound";
+  }
 };
 
-export { searchUsers, getUserAndRepos };
+// get user repos
+const getUserRepos = async (login) => {
+  const params = new URLSearchParams({
+    sort: "created",
+    per_page: 10,
+  });
+  const response = await fetch(`${url}/users/${login}/repos?${params}`, {
+    headers: {
+      Authorization: token,
+    },
+  });
+
+  if (response.ok) {
+    const repos = await response.json();
+
+    return repos;
+  } else {
+    window.location = "/notfound";
+  }
+};
+
+// Get user and repos
+// export const getUserAndRepos = async (login) => {
+//     const [user, repos] = await Promise.all([
+//       github.get(`/users/${login}`),
+//       github.get(`/users/${login}/repos`),
+//     ])
+
+//     return { user: user.data, repos: repos.data }
+//   }
+
+export { searchUsers, getSingleUser, getUserRepos };
